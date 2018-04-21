@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:b="http://microsoft.com/schemas/VisualStudio/TeamTest/2010" xmlns:msxsl="urn:schemas-microsoft-com:xslt">
   <xsl:param name="solutionFolder" />
-  <xsl:param name="projectName" />
-
-
+  <xsl:param name="projectNames" />
+  <xsl:variable name="projectNamesArray" select="tokenize($projectNames, ',')" />
+  
+  
+  
 	<xsl:output method="xml" indent="yes" />	
-	<xsl:template match="/">
+	<xsl:template match="/">    
 		<testExecutions version="1">
       <xsl:for-each-group select="//b:TestMethod" group-by="@className">
+        <xsl:variable name="projectName" select="$projectNamesArray[contains(current-grouping-key(), .)][1]" />        
         <xsl:variable name="a" select="replace(current-grouping-key(), $projectName, '')" />
         <xsl:variable name="b" select="replace($a, '\.', '\\')" />
         <xsl:variable name="c" select="concat($solutionFolder, '\', $projectName, $b, '.cs')" />
